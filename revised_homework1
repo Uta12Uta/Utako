@@ -1,0 +1,32 @@
+def binary_search(dictionary, target):
+    left = 0
+    right = len(dictionary) - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+        middle_word = dictionary[mid][0]  
+
+        if target < middle_word:
+            right = mid - 1
+        elif target > middle_word:
+            left = mid + 1
+        else:
+            return dictionary[mid][1]  
+
+    return None  
+
+def better_solution(random_word, dictionary):
+    sorted_random_word = ''.join(sorted(random_word))
+
+    new_dictionary = []
+    for word in dictionary:
+        sorted_word = ''.join(sorted(word))
+        new_dictionary.append((sorted_word, word))
+
+    new_dictionary.sort()
+    result = binary_search(new_dictionary, sorted_random_word)
+
+    if result:
+        print(result)
+    else:
+        print("見つかりませんでした")
