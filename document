@@ -2,10 +2,10 @@ Homework 1
 I implemented a data structure hash table to manage.
 First, in the delete function, I implemented the logic to remove an element associated with a given key from the hash table. This was done by linearly traversing the corresponding bucket and reconnecting the nodes to exclude the target node once it is found.
 Next, I improved the calculate_hash function. The previous implementation simply added up the ord(i) values of each character, which meant that strings like “abc” and “cab” could result in the same hash value, causing collisions.
-To address this, I modified the function to combine each character's ord(i)  value using weighted powers of 256. This approach reflects the order of characters in the string, effectively reducing the chance of collisions caused by rearranged characters.
+To address this, I modified the function to combine each character's ord(i)  value using weighted powers of 11. This approach reflects the order of characters in the string, effectively reducing the chance of collisions caused by rearranged characters.
 I also implemented a rehashing mechanism that adjusts the bucket size based on the number of items in the cache.
 In the check_size function, when the number of items exceeds or drops below a certain threshold, it triggers the rehash function. This function re-registers all existing elements into a newly sized hash table by calling the put function for each of them.
-Overall, the processing was efficient and completed in under 20 seconds.
+Overall, the processing was efficient and completed in under 32 seconds.
 
 
 
