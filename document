@@ -1,0 +1,24 @@
+Homework 1
+I implemented a data structure hash table to manage.
+First, in the delete function, I implemented the logic to remove an element associated with a given key from the hash table. This was done by linearly traversing the corresponding bucket and reconnecting the nodes to exclude the target node once it is found.
+Next, I improved the calculate_hash function. The previous implementation simply added up the ord(i) values of each character, which meant that strings like “abc” and “cab” could result in the same hash value, causing collisions.
+To address this, I modified the function to combine each character's ord(i)  value using weighted powers of 256. This approach reflects the order of characters in the string, effectively reducing the chance of collisions caused by rearranged characters.
+I also implemented a rehashing mechanism that adjusts the bucket size based on the number of items in the cache.
+In the check_size function, when the number of items exceeds or drops below a certain threshold, it triggers the rehash function. This function re-registers all existing elements into a newly sized hash table by calling the put function for each of them.
+Overall, the processing was efficient and completed in under 20 seconds.
+
+
+
+Homework2
+Balanced tree structures guarantee about O(log N) time complexity for operations. In contrast, hash tables are typically fast on average, but in the worst case—such as when rehashing is triggered or when many keys collide—they can degrade to O(N) time complexity.
+Furthermore, hash tables tend to consume more memory and are vulnerable to DoS attacks. An attacker can intentionally insert many keys that hash to the same value, causing performance to drop drastically and potentially making the system temporarily unusable.
+For these reasons, balanced trees are often preferred in large-scale databases and systems where consistent performance and security are critical.
+
+
+Homework3,4
+I implemented a system that uses a combination of a linked list and a hash table.
+Each time a URL is accessed, it is hashed and stored in the hash table. At the same time, the linked list keeps track of the access order.
+If the URL has been accessed before, the previous node is removed, its data is updated, and it is moved to the front of the list to indicate that it is the most recently accessed. The corresponding entry in the hash table is also updated.
+If the URL is being accessed for the first time, the current cache size is checked. If the cache is not full, the new node is simply added to the front of the list and registered in the hash table.
+However, if the cache is full, the least recently accessed item (at the end of the list) is removed both from the list and from the hash table. Then, the new URL is added to the front of the list.
+In this way, the system always maintains the most recent access information within the fixed cache size.
