@@ -13,12 +13,12 @@ import random, sys, time
 #
 # |key|: string
 # Return value: a hash value
-def calculate_hash(key): #256 represents the full range of one byte (8 bits), allowing characters to be distinguished safely.
+def calculate_hash(key):
     assert type(key) == str
     # Note: This is not a good hash function. Do you see why?
     hash = 0
     for i in range(len(key)):
-     hash += ord(key[i]) * (256 ** i)
+     hash += ord(key[i]) * (11 ** i)
     return hash
 
 def is_prime(n):#find prime numbers
