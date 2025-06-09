@@ -1,0 +1,166 @@
+def read_number(line, index):#ここで少数点以下のものも整数も計算する
+    number = 0
+    
+    while index < len(line) and line[index].isdigit():
+        number = number * 10 + int(line[index])
+        index += 1
+    if index < len(line) and line[index] == ".":
+        decimal, index = readDecimal(line, index + 1)
+        number += decimal  
+
+    token = {'type': 'NUMBER', 'number': number}
+    return token, index
+
+def readDecimal(line, index):
+    number = 0
+    decimal = 0.1
+    while index < len(line) and line[index].isdigit():
+        number += int(line[index]) * decimal
+        decimal *= 0.1
+        index += 1
+    return number, index
+
+
+
+
+def read_plus(line, index):
+    token = {'type': 'PLUS'}
+    return token, index + 1
+
+def read_minus(line, index):
+    token = {'type': 'MINUS'}
+    return token, index + 1
+
+def read_multiply(line, index):
+    token = {'type': 'MULTIPLY'}
+    return token, index + 1
+
+def read_divide(line, index):
+    token = {'type': 'DIVIDE'}
+    return token, index + 1
+
+
+def tokenize(line):
+    """
+    Tokenize the input line and return a list of tokens
+    """
+    tokens = []
+    index = 0
+    while index < len(line):
+        if line[index].isdigit():
+            (token, index) = read_number(line, index)
+        elif line[index] == '+':
+            (token, index) = read_plus(line, index)
+        elif line[index] == '-':
+            (token, index) = read_minus(line, index)
+        elif line[index] == '*':
+            (token, index) = read_multiply(line, index)
+        elif line[index] == '/':
+            (token, index) = read_divide(line, index)
+        elif line[index] == '(':
+            token = {'type': 'BRA'}
+        elif line[index] == ')':
+            token = {'type': 'KET'}
+
+
+        else:
+            print('Invalid character found: ' + line[index])
+            exit(1)
+        tokens.append(token)
+    return tokens
+
+
+def evaluate(tokens):
+    """
+    Evaluate the list of tokens and return a calculated result
+    """
+    answer = 0
+    tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
+    index = 1
+    while index < len(tokens):
+        if tokens[index]['type'] == 'NUMBER':
+            if tokens[index - 1]['type'] == 'PLUS':
+                answer += tokens[index]['number']
+            elif tokens[index - 1]['type'] == 'MINUS':
+                answer -= tokens[index]['number']
+            elif tokens[index - 1]['type'] == 'MULTIPLY':
+                answer *= tokens[index]['number']
+            elif tokens[index - 1]['type'] == 'DIVIDE':
+                answer /= tokens[index]['number']
+              
+            else:
+                print('Invalid syntax')
+        index += 1
+    return answer
+
+
+def calculate_ordered1(tokens):
+    index = 0
+    new_tokens = []
+
+    while index < len(tokens):
+        if tokens[index]['type'] in ('MULTIPLY', 'DIVIDE'):
+            # 前後の数値トークンを取得
+            left = new_tokens.pop()  # 1つ前のNUMBER
+            right = tokens[index + 1]
+            if tokens[index]['type'] == 'MULTIPLY':
+                result = left['number'] * right['number']
+            else:
+                result = left['number'] / right['number']
+
+            # 計算結果を新しいトークンとして追加
+            new_tokens.append({'type': 'NUMBER', 'number': result})
+            index += 2  # 次のトークン（rightの次）へ進む
+        else:
+            new_tokens.append(tokens[index])
+            index += 1
+
+    return new_tokens
+
+def calculate_ordered2(tokens):
+    index = 0
+    new_tokens = []
+
+    while index < len(tokens):
+        if tokens[index]['type'] == 'BRA':
+            # 括弧の開始を見つけたら、対応する閉じ括弧を探す
+            paren_depth = 1
+            sub_tokens = []
+            index += 1  # skip '('
+
+            while index < len(tokens) and paren_depth > 0:
+                if tokens[index]['type'] == 'BRA':
+                    paren_depth += 1
+                elif tokens[index]['type'] == 'KET':
+                    paren_depth -= 1
+                    if paren_depth == 0:
+                        break  # 対応する閉じ括弧を見つけた
+
+                if paren_depth > 0:
+                    sub_tokens.append(tokens[index])
+                index += 1
+
+            # 括弧内を評価
+            sub_tokens = tokenize(line)
+            sub_tokens = calculate_ordered1(tokens)
+            inner_result = evaluate(sub_tokens)
+            new_tokens.append({'type': 'NUMBER', 'number': inner_result})
+            index += 1  # skip ')'
+
+        else:
+            new_tokens.append(tokens[index])
+            index += 1
+
+    return new_tokens
+
+
+
+
+while True:
+    print('> ', end="")
+    line = input()
+    tokens = tokenize(line)
+    tokens = calculate_ordered2(tokens)
+    tokens = calculate_ordered1(tokens)
+    answer = evaluate(tokens)
+    print("answer = %f\n" % answer)
