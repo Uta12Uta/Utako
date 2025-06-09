@@ -8,18 +8,18 @@ def read_number(line, index):#ここで少数点以下のものも整数も計�
     while index < len(line) and line[index].isdigit():
         number = number * 10 + int(line[index])
         index += 1
-    if index < len(line) and line[index] == ".":
+    if index < len(line) and line[index] == ".":　#小数点があった場合
         decimal, index = readDecimal(line, index + 1)
-        number += decimal
+        number += decimal　　　　　　　　　　　　　　#小数部分を加える
 
-    token = {'type': 'NUMBER', 'number': number}
+    token = {'type': 'NUMBER', 'number': number}　　#記録する
     return token, index
 
-def readDecimal(line, index):
+def readDecimal(line, index):　　#小数部分を読み取る補助関数
     number = 0
     decimal = 0.1
     while index < len(line) and line[index].isdigit():
-        number += int(line[index]) * decimal
+        number += int(line[index]) * decimal　　#0.1をかけていって加算する
         decimal *= 0.1
         index += 1
     return number, index
@@ -86,7 +86,7 @@ def tokenize(line):
     return tokens
 
 
-def evaluate(tokens):
+def evaluate(tokens):　　　#四則演算の評価
     """
     Evaluate the list of tokens and return a calculated result
     """
@@ -118,7 +118,7 @@ def evaluate(tokens):
     return answer
 
 
-def calculate_ordered1(tokens):
+def calculate_ordered1(tokens):　　#掛け算、割り算の優先度
     index = 0
     new_tokens = []
 
@@ -141,20 +141,19 @@ def calculate_ordered1(tokens):
 
     return new_tokens
 
-def calculate_ordered2(tokens):
+def calculate_ordered2(tokens): #かっこ、abs,int,roundの優先評価
     index = 0
     new_tokens = []
 
-    while index < len(tokens):
-        if tokens[index]['type'] in ('ABS', 'ROUND', 'INT'):
+    while index < len(tokens):　　　　　　　　　　　　　　
+        if tokens[index]['type'] in ('ABS', 'ROUND', 'INT'):　　　#abs,round,intの計算方法
             func_type = tokens[index]['type']
             index += 1
             if tokens[index]['type'] != 'BRA':
                 print('Error: expected "(" after function name')
                 exit(1)
 
-            # 括弧の中身を取り出す
-            index += 1
+            index += 1            # 括弧の中身を取り出す
             sub_tokens = []
             paren_depth = 1
             while index < len(tokens) and paren_depth > 0:
@@ -168,12 +167,10 @@ def calculate_ordered2(tokens):
                     sub_tokens.append(tokens[index])
                 index += 1
 
-            # 中身を計算
-            sub_tokens = calculate_ordered2(sub_tokens)
+            sub_tokens = calculate_ordered2(sub_tokens)　            # 中身を計算
             sub_tokens = calculate_ordered1(sub_tokens)
             result = evaluate(sub_tokens)
 
-            # 関数適用
             if func_type == 'ABS':
                 result = abs(result)
             elif func_type == 'ROUND':
@@ -183,8 +180,7 @@ def calculate_ordered2(tokens):
 
             new_tokens.append({'type': 'NUMBER', 'number': result})
             index += 1  # skip closing ')'
-        elif tokens[index]['type'] == 'BRA':
-            # 通常の括弧処理
+        elif tokens[index]['type'] == 'BRA':　            # 通常の括弧処理
             paren_depth = 1
             sub_tokens = []
             index += 1
