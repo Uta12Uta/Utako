@@ -100,17 +100,16 @@ def calculate_ordered1(tokens):
 
     while index < len(tokens):
         if tokens[index]['type'] in ('MULTIPLY', 'DIVIDE'):
-            # 前後の数値トークンを取得
-            left = new_tokens.pop()  # 1つ前のNUMBER
+
+            left = new_tokens.pop() 
             right = tokens[index + 1]
             if tokens[index]['type'] == 'MULTIPLY':
                 result = left['number'] * right['number']
             else:
                 result = left['number'] / right['number']
 
-            # 計算結果を新しいトークンとして追加
             new_tokens.append({'type': 'NUMBER', 'number': result})
-            index += 2  # 次のトークン（rightの次）へ進む
+            index += 2  
         else:
             new_tokens.append(tokens[index])
             index += 1
