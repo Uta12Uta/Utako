@@ -107,7 +107,7 @@ def calculate_ordered1(tokens):
 
             # 計算結果を新しいトークンとして追加
             new_tokens.append({'type': 'NUMBER', 'number': result})
-            index += 2  # 次のトークン（rightの次）へ進む
+            index += 2  # 次のトークンへ進む
         else:
             new_tokens.append(tokens[index])
             index += 1
