@@ -1,6 +1,20 @@
 import sys
 import collections
 
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, item):
+        self.items.append(item)
+
+    def dequeue(self):
+        return self.items.pop(0)
+
+    def empty(self):
+        return len(self.items) == 0
+
+
 class Wikipedia:
 
     # Initialize the graph of pages.
@@ -17,7 +31,7 @@ class Wikipedia:
         self.links = {}
 
         # Read the pages file into self.titles.
-        with open(pages_file) as file:
+        with open("pages_medium.txt") as file:
             for line in file:
                 (id, title) = line.rstrip().split(" ")
                 id = int(id)
@@ -27,7 +41,7 @@ class Wikipedia:
         print("Finished reading %s" % pages_file)
 
         # Read the links file into self.links.
-        with open(links_file) as file:
+        with open("links_medium.txt") as file:
             for line in file:
                 (src, dst) = line.rstrip().split(" ")
                 (src, dst) = (int(src), int(dst))
@@ -36,6 +50,8 @@ class Wikipedia:
                 self.links[src].append(dst)
         print("Finished reading %s" % links_file)
         print()
+
+
 
 
     # Example: Find the longest titles.
@@ -69,31 +85,34 @@ class Wikipedia:
                 print(self.titles[dst], link_count_max)
         print()
 
-          
+
 
 
     # Homework #1: Find the shortest path.
     # 'start': A title of the start page.
     # 'goal': A title of the goal page.
     def find_shortest_path(self, start, goal):
+      start_id = [k for k, v in self.titles.items() if v == start][0] #idで追う
+      goal_id = [k for k, v in self.titles.items() if v == goal][0]
       queue = Queue()
       visited = {}
       parent = {}
-      visited[start] = True
-      queue.enqueue(start)
-      
+      visited[start_id] = True
+      queue.enqueue(start_id)
+
       while not queue.empty():
           node = queue.dequeue()
-          if node == goal:
-            path = [goal]
-            while path[-1] != start:
+          if node == goal_id:
+            path = [goal_id]
+            while path[-1] != start_id: #startになるまでさかのぼる
               path.append(parent[path[-1]])
             path.reverse()
-            return path
-            #直前のやつを確認、そこからスタートまでさかのぼる
-          print(path)
-          return "Found"
-          for child in links[node]:
+            print("The shortest path are:")
+            for path_id in path:
+              path_title = self.titles[path_id]
+              print(path_title)
+
+          for child in self.links[node]:
               if not child in visited:
                   visited[child] = True
                   queue.enqueue(child)
@@ -104,32 +123,35 @@ class Wikipedia:
 
 
     # Homework #2: Calculate the page ranks and print the most popular pages.
-    def find_most_popular_pages(self): 
-      n = len(titles) 
-      old_pagerank = [1] * n   #すべてのリンクに１を付与する。
+    def find_most_popular_pages(self):
+      n = len(self.titles)
+      old_pagerank = {i: 1 for i in self.titles}   #すべてのリンクに１を付与する。
       while True:
-       new_pagerank = [0] * n 
-       for i in range(n):
-        out_links = links[i]  # i から出るリンク
+       new_pagerank = {i: 0 for i in self.titles}
+       for i in self.links:
+        out_links = self.links[i]  # i から出るリンク
         if not out_links:
             continue
-        weight = old_pagerank[i] / len(out_links)   #自分から出ている→の個数でわってそれぞれに重荷をつける 
+        weight = old_pagerank[i] / len(out_links)   #自分から出ている→の個数でわってそれぞれに重荷をつける
         for j in out_links:  # 出ていく先（i → j）
             new_pagerank[j] += weight      #自分がもらう矢印の重荷をすべてタス
 
-       diff = sum(abs(new_pagerank[i] - old_pagerank[i]) for i in range(n))
+
+       diff = sum(abs(new_pagerank[i] - old_pagerank[i]) for i in self.titles)
+       print(diff)
        if diff < 0.01:
           break
 
-      old_pagerank = new_pagerank[:]
+       old_pagerank = new_pagerank.copy()
 
     # 上位10ページの表示
       top10 = sorted(enumerate(new_pagerank), key=lambda x: x[1], reverse=True)[:10]
+      print("The most popular pages are:")
       for index,_ in top10:
-        print(titles[index])   #その時のnew_pagerank[i]の中で上位10個をプリントする
+        print(self.titles[index])   #その時のnew_pagerank[i]の中で上位10個をプリントする
 
 
-   
+
 
 
     # Homework #3 (optional):
@@ -172,6 +194,7 @@ if __name__ == "__main__":
     wikipedia.find_most_linked_pages()
     # Homework #1
     wikipedia.find_shortest_path("渋谷", "パレートの法則")
+
     # Homework #2
     wikipedia.find_most_popular_pages()
     # Homework #3 (optional)
