@@ -127,28 +127,39 @@ class Wikipedia:
       n = len(self.titles)
       old_pagerank = {i: 1 for i in self.titles}   #すべてのリンクに１を付与する。
       while True:
+       total_dangling = 0
        new_pagerank = {i: 0 for i in self.titles}
        for i in self.links:
         out_links = self.links[i]  # i から出るリンク
         if not out_links:
-            continue
-        weight = old_pagerank[i] / len(out_links)   #自分から出ている→の個数でわってそれぞれに重荷をつける
-        for j in out_links:  # 出ていく先（i → j）
+          total_dangling += old_pagerank[i]
+       for i in self.links:
+        new_pagerank[i]+=total_dangling / n
+
+        out_links = self.links[i]
+        if out_links:
+         weight = old_pagerank[i]*0.85 / len(out_links)   #自分から出ている→の個数でわってそれぞれに重荷をつける
+
+         new_pagerank[i] += 0.15
+         for j in out_links:  # 出ていく先（i → j）
             new_pagerank[j] += weight      #自分がもらう矢印の重荷をすべてタス
+       total = sum(new_pagerank[i] for i in self.links)
+
 
 
        diff = sum(abs(new_pagerank[i] - old_pagerank[i]) for i in self.titles)
        print(diff)
        if diff < 0.01:
-          break
+        break
 
        old_pagerank = new_pagerank.copy()
 
     # 上位10ページの表示
-      top10 = sorted(enumerate(new_pagerank), key=lambda x: x[1], reverse=True)[:10]
+      new_pagerank = {k: v for k, v in sorted(new_pagerank.items(), key =lambda item:item[1], reverse = True)}[:10]
+      index = list(new_pagerank.keys())
       print("The most popular pages are:")
-      for index,_ in top10:
-        print(self.titles[index])   #その時のnew_pagerank[i]の中で上位10個をプリントする
+      for i in index:
+        print(self.titles[i])  #その時のnew_pagerank[i]の中で上位10個をプリントする
 
 
 
