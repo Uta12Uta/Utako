@@ -34,5 +34,6 @@ def solve(cities):
 
 
 if __name__ == '__main__':
-    tour = solve(read_input("input_0.csv"))
+    assert len(sys.argv) > 1
+    tour = solve(read_input(sys.argv[1]))
     print_tour(tour)
