@@ -15,7 +15,9 @@ def cross(v1, v2):
     return v1[0]*v2[1] - v1[1]*v2[0]
 
 #open_fileのやつはcites =[]でリスト化しておく
+
 def exchange(cities, order): #交差していたらそれを入れ替えるプログラム
+  changed = False
   for i in range(len(order)-1):
     for j in range(i+2, len(order)-1):
         a, b = order[i], order[i+1]
@@ -37,6 +39,7 @@ def exchange(cities, order): #交差していたらそれを入れ替えるプ�
 
         if cp1 * cp2 < 0 and cp3 * cp4 < 0:
            order[i+1:j+1] = reversed(order[i+1:j+1]) #交差したら反転させる
+           changed = True
  
 
 
@@ -52,8 +55,8 @@ def solve(cities):
     distance,index = Tree.query(query_points)  #これにより一番近い点を見つける
     order.append(cities.index(new_points[index]))  #orderに入れていく
     query_points = new_points[index]  #調べたいポイント
-  for _ in range(10):
-    exchange(cities, order)
+  while exchange(cities,order):
+    pass
   return order#最後に一つ残るやつを入れる
 #交差しているところがあれば入れ替える
 
