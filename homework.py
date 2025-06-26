@@ -3,8 +3,6 @@ import sys
 from common import print_tour, read_input
 from scipy.spatial import KDTree
 
-#open_fileのやつはcites =[]dでリスト化しておく
-
 
 def vec(a, b, cities, order):
     x1, y1 = cities[order[a]]
@@ -13,8 +11,7 @@ def vec(a, b, cities, order):
 
 def cross(v1, v2):
     return v1[0]*v2[1] - v1[1]*v2[0]
-
-#open_fileのやつはcites =[]でリスト化しておく
+    
 
 def exchange(cities, order): #交差していたらそれを入れ替えるプログラム
   changed = False
@@ -23,16 +20,15 @@ def exchange(cities, order): #交差していたらそれを入れ替えるプ�
         a, b = order[i], order[i+1]
         c, d = order[j], order[j+1]
 
-            # ベクトルを作る
-        ab = vec(i, i+1, cities, order)
+        ab = vec(i, i+1, cities, order)  # ベクトルを作る
         ac = vec(i, j, cities, order)
         ad = vec(i, j+1, cities, order)
         cd = vec(j, j+1, cities, order)
         ca = vec(j, i, cities, order)
         cb = vec(j, i+1, cities, order)
 
-            # 外積で交差判定
-        cp1 = cross(ab, ac)
+            
+        cp1 = cross(ab, ac) #外積で判定
         cp2 = cross(ab, ad)
         cp3 = cross(cd, ca)
         cp4 = cross(cd, cb)
@@ -57,20 +53,7 @@ def solve(cities):
     query_points = new_points[index]  #調べたいポイント
   while exchange(cities,order):
     pass
-  return order#最後に一つ残るやつを入れる
-#交差しているところがあれば入れ替える
-
-
-
-
-
- 
-    #貪欲法を用いる
-#とにかくその時いちばん近いところに行く
-
-
-
-#交差しているところがあれば入れ替える
+  return order
 
 
 if __name__ == '__main__':
