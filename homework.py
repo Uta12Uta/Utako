@@ -4,7 +4,7 @@ from common import print_tour, read_input
 from scipy.spatial import KDTree
 
 
-def vec(a, b, cities, order):
+def vec(a, b,cities,order):
     x1, y1 = cities[order[a]]
     x2, y2 = cities[order[b]]
     return (x2 - x1, y2 - y1)
