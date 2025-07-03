@@ -110,5 +110,6 @@ def solve_with_divide_and_opt(cities):
 
 # --- 実行 ---
 if __name__ == '__main__':
-    cities = read_input("input_2.csv")
-    tour = solve_with_divide_and_opt(cities)
+    assert len(sys.argv) > 1
+    tour = solve(read_input(sys.argv[1]))
+    print_tour(tour)
