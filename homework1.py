@@ -145,7 +145,7 @@ def merge_subpaths(points, subpaths, shared_indices):
     for sp, shared_idx in zip(subpaths[1:], shared_indices[1:]):
         candidate = idx_to_coords(sp)
         shared_point = points[shared_idx]
-        # 共通点として candidate[0] を使って merge（ざっくりでOK）
+        # 共通点として candidate[0] を使って merge
         merged_path = merge_paths(merged_path, candidate, shared_point)
 
     return coords_to_idx(merged_path)
