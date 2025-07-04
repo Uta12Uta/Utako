@@ -6,8 +6,8 @@ from common import read_input, print_tour
 import math
 
 def split_4(points):#4つに分ける
-    cx = sum(p[0] for p in points) / len(points)
-    cy = sum(p[1] for p in points) / len(points)
+    cx = sum(p[0] for p in points) / len(points) #xの重心座標
+    cy = sum(p[1] for p in points) / len(points) #yの重心座標
     q1, q2, q3, q4 = [], [], [], []
     for p in points:
         if p[0] >= cx and p[1] >= cy: #第1象限
@@ -28,9 +28,8 @@ def distance(p1, p2):       #距離を測定する
 
 
 def greedy_tour(points):#貪欲法
-    from scipy.spatial import KDTree
 
-    def solve(cities):
+    def solve(cities): #
         order = []
         query_point = cities[0]
         order.append(0)
@@ -56,7 +55,7 @@ def greedy_tour(points):#貪欲法
 
 
 def two_opt(points, order): #2-opt、外積判断
-    def vec(i, j):
+    def vec(i, j): 
         x1, y1 = points[order[i]]
         x2, y2 = points[order[j]]
         return (x2 - x1, y2 - y1)
