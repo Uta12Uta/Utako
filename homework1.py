@@ -3,6 +3,8 @@ from scipy.spatial import KDTree
 import functools
 from common import read_input, print_tour
 
+import math
+
 def split_4(points):#4つに分ける
     cx = sum(p[0] for p in points) / len(points)
     cy = sum(p[1] for p in points) / len(points)
@@ -84,15 +86,7 @@ def two_opt(points, order): #2-opt
 
 
 
-
-  
-def solve_subregion(points):
-    order = greedy_tour(points)  # Nearest neighbor
-    while two_opt(points, order):
-        pass
-    return order
-
-def merge_subpaths(points, subpaths, shared_indices):
+def merge_subpaths(points, subpaths, shared_indices): #4分割を統合する
 
     # index → 座標の変換
     def idx_to_coords(order):
@@ -104,9 +98,12 @@ def merge_subpaths(points, subpaths, shared_indices):
     def search(p, buff):
         for i in range(len(buff)):
             if buff[i] == p:
-                if i == 0: return len(buff) - 1, i, i + 1
-                if i == len(buff) - 1: return i - 1, i, 0
-                return i - 1, i, i + 1
+                if i == 0: 
+                  return len(buff) - 1, i, i + 1
+                if i == len(buff) - 1: 
+                  return i - 1, i, 0
+                else:
+                  return i - 1, i, i + 1
 
     def differ(p, c, q):
         return distance(p, c) + distance(c, q) - distance(p, q)
@@ -145,48 +142,41 @@ def merge_subpaths(points, subpaths, shared_indices):
     for sp, shared_idx in zip(subpaths[1:], shared_indices[1:]):
         candidate = idx_to_coords(sp)
         shared_point = points[shared_idx]
-        # 共通点として candidate[0] を使って merge
         merged_path = merge_paths(merged_path, candidate, shared_point)
 
     return coords_to_idx(merged_path)
 
 def solve(points):
+    cx = sum(p[0] for p in points) / len(points)#重心を求める
+    cy = sum(p[1] for p in points) / len(points)
+    shared_point = min(points, key=lambda p: distance(p, (cx, cy)))#重心に一番近い都市を求める
+
     subregions = split_4(points)
-
-    # 各領域の中心点を共有点（仮想ノード）として作成
-    shared_points = []
+           
     for region in subregions:
-        if region:  # 空でなければ
-            cx = sum(p[0] for p in region) / len(region)
-            cy = sum(p[1] for p in region) / len(region)
-            shared_points.append((cx, cy))
-            region.append((cx, cy))  # 領域に共有点を追加
-    all_paths = []
-    shared_indices = []
+        if shared_point not in region:
+                region.append(shared_point)
 
-    for region, sp in zip(subregions, shared_points):
+    shared_idx = points.index(shared_point)
+
+    all_paths = []
+    shared_indices = [shared_idx] * len(subregions)  # 各 region に対して同じ index を使う
+
+    for region in subregions:
         order = greedy_tour(region)
         while two_opt(region, order):
             pass
 
-        # 元のpointsへのindexに変換（regionの点はpointsには存在しないので注意！）
-        # まず region の中の各点を元の points に追加して index を確定
-        for p in region:  #4分割されたものそれぞれでgreedyと2-optを行う
-            if p not in points:
-                points.append(p)
-
+        # region の order を points のインデックスに変換
         order_indices = [points.index(region[i]) for i in order]
         all_paths.append(order_indices)
 
-        # 共有点の index を保存
-        shared_indices.append(points.index(sp))
 
     merged_order = merge_subpaths(points, all_paths, shared_indices) # 距離の差分が小さい順に接続
     while two_opt(points, merged_order):  #統合したものに2-optを行う
         pass
 
     return merged_order
-
 
 
 # --- 実行 ---
