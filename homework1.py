@@ -150,7 +150,7 @@ def merge_subpaths(points, subpaths, shared_indices):
 
     return coords_to_idx(merged_path)
 
-def hierarchical_tsp(points):
+def solve(points):
     subregions = split_4(points)
 
     # 各領域の中心点を共有点（仮想ノード）として作成
