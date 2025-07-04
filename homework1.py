@@ -10,18 +10,18 @@ def split_4(points):#4つに分ける
     cy = sum(p[1] for p in points) / len(points)
     q1, q2, q3, q4 = [], [], [], []
     for p in points:
-        if p[0] >= cx and p[1] >= cy:
+        if p[0] >= cx and p[1] >= cy: #第1象限
             q1.append(p)
-        elif p[0] < cx and p[1] >= cy:
+        elif p[0] < cx and p[1] >= cy: #第2象限
             q2.append(p)
-        elif p[0] < cx and p[1] < cy:
+        elif p[0] < cx and p[1] < cy: #第3象限
             q3.append(p)
-        else:
+        else:                          #第4象限
             q4.append(p)
     return [q1, q2, q3, q4]
 
 
-def distance(p1, p2):
+def distance(p1, p2):       #距離を測定する
     dx = p1[0] - p2[0]
     dy = p1[1] - p2[1]
     return math.hypot(dx, dy)  # sqrt(dx^2 + dy^2)
@@ -55,7 +55,7 @@ def greedy_tour(points):#貪欲法
 
 
 
-def two_opt(points, order): #2-opt
+def two_opt(points, order): #2-opt、外積判断
     def vec(i, j):
         x1, y1 = points[order[i]]
         x2, y2 = points[order[j]]
@@ -87,15 +87,14 @@ def two_opt(points, order): #2-opt
 
 
 def merge_subpaths(points, subpaths, shared_indices): #4分割を統合する
-
-    # index → 座標の変換
-    def idx_to_coords(order):
+    
+    def idx_to_coords(order):　
         return [points[i] for i in order]
 
     def coords_to_idx(path):
         return [points.index(p) for p in path]
 
-    def search(p, buff):
+    def search(p, buff):　　　　#共有点を見つける
         for i in range(len(buff)):
             if buff[i] == p:
                 if i == 0: 
@@ -105,10 +104,10 @@ def merge_subpaths(points, subpaths, shared_indices): #4分割を統合する
                 else:
                   return i - 1, i, i + 1
 
-    def differ(p, c, q):
+    def differ(p, c, q):　　#差分を求める
         return distance(p, c) + distance(c, q) - distance(p, q)
 
-    def make_new_path(buff, c, succ):
+    def make_new_path(buff, c, succ):　#挿入するために新しい経路を作る
         path = []
         i = c + succ
         while True:
@@ -119,7 +118,7 @@ def merge_subpaths(points, subpaths, shared_indices): #4分割を統合する
             i += succ
         return path
 
-    def merge_paths(buff1, buff2, p):
+    def merge_paths(buff1, buff2, p):　#4つに分割したものをつなげる
         p1, i1, n1 = search(p, buff1)
         p2, i2, n2 = search(p, buff2)
         d1 = differ(buff1[p1], p, buff2[p2])
@@ -137,7 +136,6 @@ def merge_subpaths(points, subpaths, shared_indices): #4分割を統合する
             buff1[n1:n1] = make_new_path(buff2, i2, 1)
         return buff1
 
-    # 初期化（最初のサブツアーを座標リストで使う
     merged_path = [points[i] for i in subpaths[0]]
     for sp, shared_idx in zip(subpaths[1:], shared_indices[1:]):
         candidate = idx_to_coords(sp)
@@ -160,14 +158,13 @@ def solve(points):
     shared_idx = points.index(shared_point)
 
     all_paths = []
-    shared_indices = [shared_idx] * len(subregions)  # 各 region に対して同じ index を使う
+    shared_indices = [shared_idx] * len(subregions)  
 
     for region in subregions:
         order = greedy_tour(region)
         while two_opt(region, order):
             pass
 
-        # region の order を points のインデックスに変換
         order_indices = [points.index(region[i]) for i in order]
         all_paths.append(order_indices)
 
