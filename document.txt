@@ -1,5 +1,31 @@
 領域を４つに分割し、それぞれの領域でgreedyと2-optを行い、それを、つなげて、つなげた後にまた2-optを用いるということを実装しました。
 都市全体で重心を求め、重心に一番近い都市をそれぞれの領域に含め、最終的にその都市を繋げました。
+Challenge 0
+homework2       :    3291.62
+
+Challenge 1
+homework2       :    4033.53
+
+Challenge 2
+homework2       :    5574.90
+
+Challenge 3
+homework2       :    9326.44
+
+Challenge 4
+homework2       :   13622.87
+
+Challenge 5
+homework2       :   22955.82
+
+Challenge 6
+homework2       :   46613.59
+
+Challenge 7
+homework2       :   92296.36
+
+という結果になりました。
+領域分割の実装だけではまだbestscoreからは遠そうでした。領域分割、greedy,2-optに加えて、2.5-optや3-optを実装すると速くなりそうです。
 
 領域分割に関しては下記のサイトを参考に実装しました。
 参考文献
